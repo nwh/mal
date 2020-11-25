@@ -3,56 +3,56 @@
 import maltypes
 
 
-def pr_str(ast, print_readably) -> str:
+def pr_str(exp, print_readably) -> str:
 
-    if isinstance(ast, maltypes.Symbol):
-        return ast.name
+    if isinstance(exp, maltypes.Symbol):
+        return exp.name
 
-    if maltypes.is_keyword(ast):
-        return ":" + ast[1:]
+    if maltypes.is_keyword(exp):
+        return ":" + exp[1:]
 
-    if isinstance(ast, str):
-        return pr_string(ast, print_readably)
+    if isinstance(exp, str):
+        return pr_string(exp, print_readably)
 
-    if ast is maltypes.Nil:
+    if exp is maltypes.Nil:
         return "nil"
 
-    if ast is maltypes.MalTrue:
+    if exp is maltypes.MalTrue:
         return "true"
 
-    if ast is maltypes.MalFalse:
+    if exp is maltypes.MalFalse:
         return "false"
 
-    if isinstance(ast, int):
-        return str(ast)
+    if isinstance(exp, int):
+        return str(exp)
 
-    if isinstance(ast, list):
-        return "(" + " ".join(pr_str(item, print_readably) for item in ast) + ")"
+    if isinstance(exp, list):
+        return "(" + " ".join(pr_str(item, print_readably) for item in exp) + ")"
 
-    if isinstance(ast, maltypes.Vector):
-        return "[" + " ".join(pr_str(item, print_readably) for item in ast.items) + "]"
+    if isinstance(exp, maltypes.Vector):
+        return "[" + " ".join(pr_str(item, print_readably) for item in exp.items) + "]"
 
-    if isinstance(ast, maltypes.ReaderMap):
-        return "{" + " ".join(pr_str(item, print_readably) for item in ast.items) + "}"
+    if isinstance(exp, maltypes.ReaderMap):
+        return "{" + " ".join(pr_str(item, print_readably) for item in exp.items) + "}"
 
-    raise ValueError("invalid ast")
+    raise ValueError("invalid exp")
 
 
-def pr_string(ast, print_readably=False):
+def pr_string(exp, print_readably=False):
 
     if print_readably:
         chars = []
-        for ast_char in ast:
-            if ast_char == "\n":
+        for exp_char in exp:
+            if exp_char == "\n":
                 chars.append("\\n")
-            elif ast_char == "\\":
+            elif exp_char == "\\":
                 chars.append("\\\\")
-            elif ast_char == '"':
+            elif exp_char == '"':
                 chars.append('\\"')
             else:
-                chars.append(ast_char)
+                chars.append(exp_char)
         string = "".join(chars)
     else:
-        string = ast
+        string = exp
 
     return '"' + string + '"'

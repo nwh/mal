@@ -30,14 +30,14 @@ class Reader:
         return f"<Reader :pos {self.pos} :len {len(self.tokens)}>"
 
 
-def tokenize(arg: str) -> List[str]:
+def tokenize(src: str) -> List[str]:
     return [
-        token for token in TOKENS.findall(arg) if token and not token.startswith(";")
+        token for token in TOKENS.findall(src) if token and not token.startswith(";")
     ]
 
 
-def read_str(arg: str):
-    tokens = tokenize(arg)
+def read_str(src: str):
+    tokens = tokenize(src)
     if not tokens:
         raise maltypes.NoInput
 
