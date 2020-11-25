@@ -1,27 +1,27 @@
 """mal step0"""
 
 
-def READ(arg):
-    return arg
+def READ(src):
+    return src
 
 
-def EVAL(arg):
-    return arg
+def EVAL(ast, env=None):
+    return ast
 
 
-def PRINT(arg):
-    return arg
+def PRINT(exp):
+    return exp
 
 
-def rep(arg):
-    return PRINT(EVAL(READ(arg)))
+def rep(src):
+    return PRINT(EVAL(READ(src)))
 
 
 def main():
     while True:
         try:
-            arg = input("user> ")
-            print(rep(arg))
+            src = input("user> ")
+            print(rep(src))
         except EOFError:
             break
 
