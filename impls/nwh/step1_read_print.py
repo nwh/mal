@@ -1,4 +1,4 @@
-"""mal step0"""
+"""mal step1"""
 
 import ipdb
 
@@ -7,29 +7,29 @@ import printer
 import maltypes
 
 
-def READ(arg):
-    return reader.read_str(arg)
+def READ(src):
+    return reader.read_str(src)
 
 
-def EVAL(arg):
-    return arg
+def EVAL(ast, env=None):
+    return ast
 
 
-def PRINT(arg, print_readably=False):
-    return printer.pr_str(arg, print_readably)
+def PRINT(exp, print_readably=False):
+    return printer.pr_str(exp, print_readably)
 
 
-def rep(arg, print_readably=False):
-    read_val = READ(arg)
-    eval_val = EVAL(read_val)
-    return PRINT(eval_val, print_readably)
+def rep(src, print_readably=False):
+    ast = READ(src)
+    exp = EVAL(ast)
+    return PRINT(exp, print_readably)
 
 
 def main():
     while True:
         try:
-            arg = input("user> ")
-            print(rep(arg, True))
+            src = input("user> ")
+            print(rep(src, True))
         except EOFError:
             # input encountered an EOF (ctrl-d)
             break
