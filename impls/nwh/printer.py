@@ -35,6 +35,13 @@ def pr_str(exp, print_readably) -> str:
     if isinstance(exp, maltypes.ReaderMap):
         return "{" + " ".join(pr_str(item, print_readably) for item in exp.items) + "}"
 
+    if isinstance(exp, dict):
+        items = []
+        for key, val in exp.items():
+            items.append(pr_str(key, print_readably))
+            items.append(pr_str(val, print_readably))
+        return "{" + " ".join(items) + "}"
+
     raise ValueError("invalid exp")
 
 
