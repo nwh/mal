@@ -54,18 +54,24 @@ def EVAL(ast, env):
 
     first = ast[0]
 
-    # TODO keep on going here
-    
     if isinstance(first, maltypes.Symbol):
 
         if first.name == "def!":
-            pass
+            value = EVAL(ast[2], env)
+            env[ast[1].name] = value
+            return value
 
         if first.name == "let*":
-            pass
+            let_env = env.new_child()
+            bindings = ast[1]
+            if isinstance(bindings, maltypes.Vector):
+                bindings = bindings.items
+            for symbol, expr in zip(bindings[0::2], bindings[1::2]):
+                let_env[symbol.name] = EVAL(expr, let_env)
+            return EVAL(ast[2], let_env)
 
+    # apply function and return
     first, *rest = eval_ast(ast, env)
-    
     return first(*rest)
 
 
@@ -94,7 +100,7 @@ def main():
         except maltypes.NoInput:
             pass
         except KeyError as key_error:
-            print("undefined symbol", key_error)
+            print(key_error, "not found")
 
 
 if __name__ == "__main__":
