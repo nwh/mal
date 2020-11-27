@@ -25,21 +25,6 @@ class ReaderMap:
         self.items = items
 
 
-class Nil:
-    """Represents mal nil value."""
-
-    # use as singleton
-    pass
-
-
-class MalFalse:
-    """Represents mal false value."""
-
-
-class MalTrue:
-    """Represents mal true value."""
-
-
 class MalError(Exception):
     """Mal error."""
 

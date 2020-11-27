@@ -14,13 +14,13 @@ def pr_str(exp, print_readably) -> str:
     if isinstance(exp, str):
         return pr_string(exp, print_readably)
 
-    if exp is maltypes.Nil:
+    if exp is None:
         return "nil"
 
-    if exp is maltypes.MalTrue:
+    if exp is True:
         return "true"
 
-    if exp is maltypes.MalFalse:
+    if exp is False:
         return "false"
 
     if isinstance(exp, int):

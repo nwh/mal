@@ -93,13 +93,13 @@ def read_atom(reader: Reader):
     token = reader.next()
 
     if token == "nil":
-        return maltypes.Nil
+        return None
 
     if token == "true":
-        return maltypes.MalTrue
+        return True
 
     if token == "false":
-        return maltypes.MalFalse
+        return False
 
     if token.startswith(":"):
         return maltypes.keyword_prefix + token[1:]
