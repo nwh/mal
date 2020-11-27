@@ -1,4 +1,4 @@
-"""mal step3"""
+"""mal step4"""
 
 from collections import ChainMap
 
@@ -7,16 +7,7 @@ import ipdb
 import reader
 import printer
 import maltypes
-
-
-repl_env = ChainMap(
-    {
-        "+": lambda a, b: a + b,
-        "-": lambda a, b: a - b,
-        "*": lambda a, b: a * b,
-        "/": lambda a, b: a // b,
-    }
-)
+import core
 
 
 def READ(src):
@@ -52,7 +43,7 @@ def EVAL(ast, env):
     if ast == []:
         return ast
 
-    first = ast[0]
+    first, *rest = ast
 
     if isinstance(first, maltypes.Symbol):
 
@@ -70,6 +61,31 @@ def EVAL(ast, env):
                 let_env[symbol.name] = EVAL(expr, let_env)
             return EVAL(ast[2], let_env)
 
+        if first.name == "do":
+            return eval_ast(rest, env)[-1]
+
+        if first.name == "if":
+            pred = EVAL(rest[0], env)
+            if pred not in {maltypes.Nil, maltypes.MalFalse}:
+                expr = rest[1]
+            elif len(rest) > 2:
+                expr = rest[2]
+            else:
+                expr = maltypes.Nil
+            return EVAL(expr, env)
+
+        if first.name == "fn*":
+
+            def closure(*args):
+                # create new environment and bind parameters
+                fn_env = env.new_child(
+                    dict(zip([symbol.name for symbol in rest[0]], args))
+                )
+                # evaluate the function body
+                return EVAL(rest[1], fn_env)
+
+            return closure
+
     # apply function and return
     first, *rest = eval_ast(ast, env)
     return first(*rest)
@@ -81,7 +97,7 @@ def PRINT(exp, print_readably=False):
 
 def rep(src, print_readably=False):
     ast = READ(src)
-    exp = EVAL(ast, repl_env)
+    exp = EVAL(ast, core.ns)
     return PRINT(exp, print_readably)
 
 

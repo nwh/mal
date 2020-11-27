@@ -42,6 +42,9 @@ def pr_str(exp, print_readably) -> str:
             items.append(pr_str(val, print_readably))
         return "{" + " ".join(items) + "}"
 
+    if callable(exp):
+        return "#<function>"
+
     raise ValueError("invalid exp")
 
 

@@ -12,7 +12,7 @@ class Symbol:
         self.name = name
 
     def __repr__(self):
-        return f"Symbol({name})"
+        return f"Symbol({self.name})"
 
 
 class Vector:
