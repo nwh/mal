@@ -6,24 +6,28 @@ import printer
 import maltypes
 
 
-def prn(expr):
-    print(printer.pr_str(expr, True))
-    return maltypes.Nil
-
-
-listq = lambda expr: maltypes.MalTrue if isinstance(expr, list) else maltypes.MalFalse
-emptyq = lambda expr: maltypes.MalTrue if len(expr) > 0 else maltypes.MalFalse
-
 ns = ChainMap(
     {
         "+": lambda a, b: a + b,
         "-": lambda a, b: a - b,
         "*": lambda a, b: a * b,
         "/": lambda a, b: a // b,
-        "prn": prn,
+        "<": lambda a, b: a < b,
+        "<=": lambda a, b: a <= b,
+        ">": lambda a, b: a > b,
+        ">=": lambda a, b: a >= b,
+        "pr-str": lambda *exprs: " ".join(printer.pr_str(expr, True) for expr in exprs),
+        "str": lambda *exprs: "".join(printer.pr_str(expr, False) for expr in exprs),
+        "prn": lambda *exprs: print(
+            " ".join(printer.pr_str(expr, True) for expr in exprs)
+        ),
+        "println": lambda *exprs: print(
+            " ".join(printer.pr_str(expr, False) for expr in exprs)
+        ),
         "list": lambda *args: list(args),
-        "list?": listq,
-        "empty?": emptyq,
-        "count": lambda expr: len(expr),
+        "list?": lambda expr: isinstance(expr, list),
+        "empty?": lambda expr: len(expr) == 0,
+        "count": lambda expr: len(expr) if expr is not None else 0,
+        "=": lambda a, b: a == b,
     }
 )

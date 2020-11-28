@@ -61,8 +61,8 @@ def pr_string(exp, print_readably=False):
                 chars.append('\\"')
             else:
                 chars.append(exp_char)
-        string = "".join(chars)
+        string = '"' + "".join(chars) + '"'
     else:
         string = exp
 
-    return '"' + string + '"'
+    return string

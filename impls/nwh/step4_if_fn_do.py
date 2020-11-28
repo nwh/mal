@@ -66,23 +66,31 @@ def EVAL(ast, env):
 
         if first.name == "if":
             pred = EVAL(rest[0], env)
-            if pred not in {maltypes.Nil, maltypes.MalFalse}:
+            if pred is not None and pred is not False:
                 expr = rest[1]
             elif len(rest) > 2:
                 expr = rest[2]
             else:
-                expr = maltypes.Nil
+                expr = None
             return EVAL(expr, env)
 
         if first.name == "fn*":
 
-            def closure(*args):
+            def closure(*exprs):
                 # create new environment and bind parameters
-                fn_env = env.new_child(
-                    dict(zip([symbol.name for symbol in rest[0]], args))
-                )
+                fn_args = rest[0]
+                fn_body = rest[1]
+
+                local_binds = {}
+                for idx, symbol in enumerate(fn_args):
+                    if symbol.name == "&":
+                        local_binds[fn_args[idx + 1].name] = list(exprs[idx:])
+                        break
+                    local_binds[symbol.name] = exprs[idx]
+
+                fn_env = env.new_child(local_binds)
                 # evaluate the function body
-                return EVAL(rest[1], fn_env)
+                return EVAL(fn_body, fn_env)
 
             return closure
 
@@ -99,6 +107,10 @@ def rep(src, print_readably=False):
     ast = READ(src)
     exp = EVAL(ast, core.ns)
     return PRINT(exp, print_readably)
+
+
+# define the not function
+rep("(def! not (fn* (a) (if a false true)))")
 
 
 def main():

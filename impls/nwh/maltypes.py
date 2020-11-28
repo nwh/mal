@@ -19,6 +19,21 @@ class Vector:
     def __init__(self, items):
         self.items = items
 
+    def __len__(self):
+        return len(self.items)
+
+    def __getitem__(self, idx):
+        return self.items[idx]
+
+    def __iter__(self):
+        return iter(self.items)
+
+    def __eq__(self, other):
+        if not isinstance(other, Vector):
+            return False
+
+        return self.items == other.items
+
 
 class ReaderMap:
     def __init__(self, items):
