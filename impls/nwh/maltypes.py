@@ -29,10 +29,14 @@ class Vector:
         return iter(self.items)
 
     def __eq__(self, other):
-        if not isinstance(other, Vector):
-            return False
 
-        return self.items == other.items
+        if isinstance(other, Vector):
+            return self.items == other.items
+
+        if isinstance(other, list):
+            return self.items == other
+
+        return False
 
 
 class ReaderMap:
