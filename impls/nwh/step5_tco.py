@@ -1,24 +1,23 @@
 """mal step4"""
 
-from collections import ChainMap
-
 import ipdb
 
 import reader
 import printer
 import maltypes
 import core
+from env import Env
 
 
 def READ(src):
     return reader.read_str(src)
 
 
-def eval_ast(ast, env):
+def eval_ast(ast, env: Env):
 
     if isinstance(ast, maltypes.Symbol):
         # raises KeyError if symbol is not defined
-        return env[ast.name]
+        return env.get(ast.name)
 
     if isinstance(ast, list):
         return [EVAL(item, env) for item in ast]
@@ -35,41 +34,41 @@ def eval_ast(ast, env):
     return ast
 
 
-def EVAL(ast, env):
+def EVAL(ast, env: Env):
 
     while True:
-    
+
         if not isinstance(ast, list):
             return eval_ast(ast, env)
-    
+
         if ast == []:
             return ast
-    
+
         first, *rest = ast
-    
+
         if isinstance(first, maltypes.Symbol):
-    
+
             if first.name == "def!":
                 value = EVAL(ast[2], env)
-                env[ast[1].name] = value
+                env.set(ast[1].name, value)
                 return value
-    
+
             if first.name == "let*":
-                let_env = env.new_child()
+                let_env = Env(outer=env)
                 bindings = ast[1]
                 if isinstance(bindings, maltypes.Vector):
                     bindings = bindings.items
                 for symbol, expr in zip(bindings[0::2], bindings[1::2]):
-                    let_env[symbol.name] = EVAL(expr, let_env)
+                    let_env.set(symbol.name, EVAL(expr, let_env))
                 env = let_env
                 ast = ast[2]
                 continue
-    
+
             if first.name == "do":
                 eval_ast(rest[:-1], env)
                 ast = rest[-1]
                 continue
-    
+
             if first.name == "if":
                 pred = EVAL(rest[0], env)
                 if pred is not None and pred is not False:
@@ -79,30 +78,31 @@ def EVAL(ast, env):
                 else:
                     ast = None
                 continue
-            
+
             if first.name == "fn*":
-    
-                def closure(*exprs):
-                    # create new environment and bind parameters
-                    fn_args = rest[0]
-                    fn_body = rest[1]
-    
-                    local_binds = {}
-                    for idx, symbol in enumerate(fn_args):
-                        if symbol.name == "&":
-                            local_binds[fn_args[idx + 1].name] = list(exprs[idx:])
-                            break
-                        local_binds[symbol.name] = exprs[idx]
-    
-                    fn_env = env.new_child(local_binds)
-                    # evaluate the function body
-                    return EVAL(fn_body, fn_env)
-    
-                return closure
-    
+                return maltypes.MalFunc(
+                    # function body
+                    ast=rest[1],
+                    # function parameters
+                    params=rest[0],
+                    env=env,
+                    fn=lambda *exprs: EVAL(
+                        rest[1], Env(outer=env, binds=rest[0], exprs=exprs)
+                    )
+                )
+
         # apply function and return
-        first, *rest = eval_ast(ast, env)
-        return first(*rest)
+        func, *args = eval_ast(ast, env)
+
+        if callable(func):
+            return func(*args)
+
+        if isinstance(func, maltypes.MalFunc):
+            ast = func.ast
+            env = Env(outer=func.env, binds=func.params, exprs=args)
+            continue
+
+        raise maltypes.MalError("not a function", func)
 
 
 def PRINT(exp, print_readably=False):

@@ -39,6 +39,14 @@ class Vector:
         return False
 
 
+class MalFunc:
+    def __init__(self, ast, params, env, fn):
+        self.ast = ast
+        self.params = params
+        self.env = env
+        self.fn = fn
+    
+    
 class ReaderMap:
     def __init__(self, items):
         self.items = items

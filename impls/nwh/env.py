@@ -2,11 +2,15 @@
 
 
 class Env:
-    def __init__(self, outer=None, binds=None, exprs=None):
+    def __init__(self, outer=None, binds=(), exprs=()):
         self.outer = outer
-        self.binds = binds if binds is not None else []
-        self.exprs = exprs if exprs is not None else []
         self.data = {}
+
+        for idx, symbol in enumerate(binds):
+            if symbol.name == "&":
+                self.data[binds[idx+1].name] = list(exprs[idx:])
+                break
+            self.data[symbol.name] = exprs[idx]
 
     def set(self, key, value):
         self.data[key] = value
