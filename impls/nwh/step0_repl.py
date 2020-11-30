@@ -1,6 +1,3 @@
-"""mal step0"""
-
-
 def READ(src):
     return src
 

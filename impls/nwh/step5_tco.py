@@ -1,5 +1,3 @@
-"""mal step4"""
-
 import ipdb
 
 import reader
