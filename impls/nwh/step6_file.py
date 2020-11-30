@@ -1,5 +1,7 @@
 """mal step4"""
 
+import sys
+
 import ipdb
 
 import reader
@@ -111,6 +113,8 @@ def PRINT(exp, print_readably=False):
 
 repl_env = Env()
 repl_env.data.update(core.ns)
+repl_env.set("eval", lambda ast: EVAL(ast, repl_env))
+repl_env.set("*ARGV*", [])
 
 
 def rep(src, print_readably=False):
@@ -119,26 +123,31 @@ def rep(src, print_readably=False):
     return PRINT(exp, print_readably)
 
 
-# define the not function
+# define functions
 rep("(def! not (fn* (a) (if a false true)))")
+rep('(def! load-file (fn* (f) (eval (read-string (str "(do " (slurp f) "\nnil)")))))')
 
 
 def main():
-    while True:
-        try:
-            src = input("user> ")
-            print(rep(src, True))
-        except EOFError:
-            # input encountered an EOF (ctrl-d)
-            break
-        except maltypes.EOF:
-            print("EOF")
-        except maltypes.Unbalanced:
-            print("unbalanced")
-        except maltypes.NoInput:
-            pass
-        except KeyError as key_error:
-            print(key_error, "not found")
+    try:
+        if len(sys.argv) == 1:
+            while True:
+                try:
+                    src = input("user> ")
+                    print(rep(src, True))
+                except EOFError:
+                    break
+        else:
+            repl_env.set("*ARGV*", sys.argv[2:])
+            rep(f'(load-file "{sys.argv[1]}")')
+    except maltypes.EOF:
+        print("EOF")
+    except maltypes.Unbalanced:
+        print("unbalanced")
+    except maltypes.NoInput:
+        pass
+    except KeyError as key_error:
+        print(key_error, "not found")
 
 
 if __name__ == "__main__":

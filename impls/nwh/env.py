@@ -8,7 +8,7 @@ class Env:
 
         for idx, symbol in enumerate(binds):
             if symbol.name == "&":
-                self.data[binds[idx+1].name] = list(exprs[idx:])
+                self.data[binds[idx + 1].name] = list(exprs[idx:])
                 break
             self.data[symbol.name] = exprs[idx]
 

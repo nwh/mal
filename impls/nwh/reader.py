@@ -39,7 +39,7 @@ def tokenize(src: str) -> List[str]:
 def read_str(src: str):
     tokens = tokenize(src)
     if not tokens:
-        raise maltypes.NoInput
+        return None
 
     reader = Reader(tokens)
 
@@ -50,6 +50,9 @@ def read_form(reader: Reader):
 
     token = reader.peek()
 
+    if token == "@":
+        reader.next()
+        return [maltypes.Symbol("deref"), read_form(reader)]
     if token == "(":
         return read_seq(reader, "(", ")")
     if token == "[":

@@ -45,8 +45,24 @@ class MalFunc:
         self.params = params
         self.env = env
         self.fn = fn
-    
-    
+
+    def __call__(self, *args):
+        return self.fn(*args)
+
+
+class Atom:
+    def __init__(self, value):
+        self.value = value
+
+    def reset(self, value):
+        self.value = value
+        return value
+
+    def swap(self, func, *args):
+        self.value = func(self.value, *args)
+        return self.value
+
+
 class ReaderMap:
     def __init__(self, items):
         self.items = items

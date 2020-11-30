@@ -1,0 +1,3 @@
+(def! myatom (atom 1))
+;(prn myatom)
+(swap! myatom (fn* (x) (+ 1 x)))

@@ -45,6 +45,9 @@ def pr_str(exp, print_readably) -> str:
     if callable(exp) or isinstance(exp, maltypes.MalFunc):
         return "#<function>"
 
+    if isinstance(exp, maltypes.Atom):
+        return "(atom " + pr_str(exp.value, print_readably) + ")"
+
     raise ValueError("invalid exp")
 
 
