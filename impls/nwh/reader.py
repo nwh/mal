@@ -50,6 +50,18 @@ def read_form(reader: Reader):
 
     token = reader.peek()
 
+    if token == "'":
+        reader.next()
+        return [maltypes.Symbol("quote"), read_form(reader)]
+    if token == "`":
+        reader.next()
+        return [maltypes.Symbol("quasiquote"), read_form(reader)]
+    if token == "~":
+        reader.next()
+        return [maltypes.Symbol("unquote"), read_form(reader)]
+    if token == "~@":
+        reader.next()
+        return [maltypes.Symbol("splice-unquote"), read_form(reader)]
     if token == "@":
         reader.next()
         return [maltypes.Symbol("deref"), read_form(reader)]

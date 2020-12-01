@@ -1,5 +1,7 @@
 """mal core functions"""
 
+import itertools
+
 import printer
 import reader
 import maltypes
@@ -14,6 +16,8 @@ ns = {
     "=": lambda a, b: a == b,
     ">": lambda a, b: a > b,
     ">=": lambda a, b: a >= b,
+    "concat": lambda *lists: list(itertools.chain(*lists)),
+    "cons": lambda first, rest: [first, *rest],
     "count": lambda expr: len(expr) if expr is not None else 0,
     "empty?": lambda expr: len(expr) == 0,
     "list": lambda *args: list(args),
@@ -26,6 +30,9 @@ ns = {
     "read-string": reader.read_str,
     "slurp": lambda path: open(path).read(),
     "str": lambda *exprs: "".join(printer.pr_str(expr, False) for expr in exprs),
+    "vec": lambda arg: arg
+    if isinstance(arg, maltypes.Vector)
+    else maltypes.Vector(arg),
 }
 
 # atom functions
