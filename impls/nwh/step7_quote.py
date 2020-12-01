@@ -1,3 +1,4 @@
+import functools
 import sys
 
 import ipdb
@@ -13,32 +14,37 @@ def READ(src):
     return reader.read_str(src)
 
 
+def qq_loop(acc, elt):
+    if (
+        isinstance(elt, list)
+        and len(elt) == 2
+        and isinstance(elt[0], maltypes.Symbol)
+        and elt[0].name == "splice-unquote"
+    ):
+        return [maltypes.Symbol("concat"), elt[1], acc]
+    else:
+        return [maltypes.Symbol("cons"), quasiquote(elt), acc]
+
+
+def qq_foldr(seq):
+    return functools.reduce(qq_loop, reversed(seq), [])
+
+
 def quasiquote(ast):
 
-    if isinstance(ast, maltypes.Vector):
-        return [maltypes.Symbol("vec"), quasiquote(ast.items)]
-    if isinstance(ast, (maltypes.Symbol, dict)):
+    if isinstance(ast, list):
+        if (
+            len(ast) == 2
+            and isinstance(ast[0], maltypes.Symbol)
+            and ast[0].name == "unquote"
+        ):
+            return ast[1]
+        else:
+            return qq_foldr(ast)
+    elif isinstance(ast, (maltypes.Symbol, dict, maltypes.ReaderMap)):
         return [maltypes.Symbol("quote"), ast]
-    elif (
-        isinstance(ast, list)
-        and len(ast) == 2
-        and isinstance(ast[0], maltypes.Symbol)
-        and ast[0].name == "unquote"
-    ):
-        return ast[1]
-    elif isinstance(ast, list):
-        res = []
-        for elt in reversed(ast):
-            if (
-                isinstance(elt, list)
-                and len(elt) == 2
-                and isinstance(elt[0], maltypes.Symbol)
-                and elt[0].name == "splice-unquote"
-            ):
-                res = [maltypes.Symbol("concat"), elt[1], res]
-            else:
-                res = [maltypes.Symbol("cons"), quasiquote(elt), res]
-        return res
+    elif isinstance(ast, maltypes.Vector):
+        return [maltypes.Symbol("vec"), qq_foldr(ast.items)]
     else:
         return ast
 

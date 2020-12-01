@@ -14,6 +14,11 @@ class Symbol:
     def __repr__(self):
         return f"Symbol({self.name})"
 
+    def __eq__(self, other):
+        if isinstance(other, Symbol) and self.name == other.name:
+            return True
+        return False
+
 
 class Vector:
     def __init__(self, items):
@@ -37,6 +42,9 @@ class Vector:
             return self.items == other
 
         return False
+
+    def __repr__(self):
+        return f"Vector({self.items})"
 
 
 class MalFunc:
