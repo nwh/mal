@@ -45,3 +45,12 @@ ns.update(
         "swap!": lambda atom, func, *args: atom.swap(func, *args),
     }
 )
+
+# sequence functions
+ns.update(
+    {
+        "first": lambda seq: seq[0] if seq else None,
+        "nth": lambda seq, idx: seq[idx],
+        "rest": lambda seq: seq[1:] if seq else [],
+    }
+)

@@ -12,6 +12,12 @@ class Env:
                 break
             self.data[symbol.name] = exprs[idx]
 
+    def __contains__(self, key):
+        return self.find(key) is not None
+
+    def __getitem__(self, key):
+        return self.get(key)
+
     def set(self, key, value):
         self.data[key] = value
         return value

@@ -53,6 +53,7 @@ class MalFunc:
         self.params = params
         self.env = env
         self.fn = fn
+        self.is_macro = False
 
     def __call__(self, *args):
         return self.fn(*args)
