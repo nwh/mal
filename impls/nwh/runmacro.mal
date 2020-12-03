@@ -1,0 +1,6 @@
+;(defmacro! unless (fn* (pred a b) `(if ~pred ~b ~a)))
+;(pr-str (macroexpand (unless false 7 8)))
+
+(defmacro! identity (fn* (x) x))
+(pr-str "-----------------")
+(pr-str (let* (a 123) (macroexpand (identity a))))
